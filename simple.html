@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian GST Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .calculator {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f0f4ff);
+            border: none;
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+        .calculator:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+        .btn {
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 44px;
+        }
+        .btn-number {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+        .btn[onclick*="calculate"] {
+            font-size: 1.2rem;
+        }
+        .gst-toggle {
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .gst-toggle.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .dot {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        small:hover {
+            color: #6366f1 !important;
+            transition: color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="calculator bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 w-full max-w-md border border-blue-100">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-blue-800 bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">Indian GST Calculator</h1>
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a49d202e-9f49-454e-9c61-f63c3c25a0f1.png" alt="Blue calculator icon with white numbers and symbols" class="w-10 h-10 rounded-full" />
+        </div>
+
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-2">
+                <label for="amount" class="text-gray-700 font-medium">Amount (₹)</label>
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-500">Include GST</span>
+                    <div class="relative">
+                        <input type="checkbox" id="gstToggle" class="sr-only">
+                        <label for="gstToggle" class="gst-toggle block w-12 h-6 rounded-full bg-gray-300 cursor-pointer">
+                            <span class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <input type="number" id="amount" class="w-full p-4 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xl bg-white/80 shadow-sm" placeholder="0.00">
+        </div>
+
+        <div class="mb-6">
+            <label for="gstRate" class="block text-gray-700 font-medium mb-2">GST Rate (%)</label>
+            <select id="gstRate" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="28">28% (Luxury items)</option>
+                <option value="18">18% (Standard)</option>
+                <option value="12">12% (Restaurants & healthcare)</option>
+                <option value="5">5% (Essential goods)</option>
+                <option value="3">3% (Gold & jewellery)</option>
+                <option value="0">0% (Exempt)</option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-4 gap-3 mb-6">
+            <button class="btn bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-3 rounded-lg transition-colors" onclick="appendToInput('7')">7</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('8')">8</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('9')">9</button>
+            <button class="btn bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold py-3 rounded-lg" onclick="clearInput()">AC</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('4')">4</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('5')">5</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('6')">6</button>
+            <button class="btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-md" onclick="calculate()">=</button>
+            <button class="btn btn-number bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg" onclick="appendToInput('1')">1</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('2')">2</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('3')">3</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg" onclick="appendToInput('.')">.</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg col-span-2" onclick="appendToInput('0')">0</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg" onclick="appendToInput('00')">00</button>
+            <button class="btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg" onclick="backspace()">⌫</button>
+        </div>
+
+        <div class="results bg-white p-4 rounded-lg border border-indigo-200 shadow-sm">
+            <div class="flex justify-between mb-2">
+                <span class="text-blue-700">Original Amount:</span>
+                <span id="originalAmount" class="font-medium">₹0.00</span>
+            </div>
+            <div class="flex justify-between mb-2">
+                <span class="text-gray-600">GST Amount:</span>
+                <span id="gstAmount" class="font-medium">₹0.00</span>
+            </div>
+            <div class="flex justify-between text-lg font-bold">
+                <span class="text-gray-800">Total Amount:</span>
+                <span id="totalAmount" class="text-blue-600">₹0.00</span>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center text-sm text-gray-500">
+            <p>Indian GST Calculator v1.1</p>
+            <small class="text-xs text-gray-400">Made with love by liponkoch</small>
+        </div>
+    </div>
+
+    <script>
+        // Toggle GST inclusion
+        const gstToggle = document.getElementById('gstToggle');
+        const toggleLabel = document.querySelector('.gst-toggle');
+        const toggleDot = document.querySelector('.dot');
+
+        gstToggle.addEventListener('change', function() {
+            if(this.checked) {
+                toggleLabel.classList.add('active');
+                toggleDot.style.transform = 'translateX(24px)';
+            } else {
+                toggleLabel.classList.remove('active');
+                toggleDot.style.transform = 'translateX(0)';
+            }
+            calculate();
+        });
+
+        // Calculator functions
+        function appendToInput(value) {
+            const input = document.getElementById('amount');
+            if (input.value === '0' && value !== '.') {
+                input.value = value;
+            } else {
+                input.value += value;
+            }
+            calculate();
+        }
+
+        function clearInput() {
+            document.getElementById('amount').value = '';
+            document.getElementById('originalAmount').textContent = '₹0.00';
+            document.getElementById('gstAmount').textContent = '₹0.00';
+            document.getElementById('totalAmount').textContent = '₹0.00';
+        }
+
+        function backspace() {
+            const input = document.getElementById('amount');
+            input.value = input.value.slice(0, -1);
+            if (input.value === '') {
+                clearInput();
+            } else {
+                calculate();
+            }
+        }
+
+        function calculate() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const gstRate = parseFloat(document.getElementById('gstRate').value) / 100;
+            const includeGST = gstToggle.checked;
+
+            let originalAmount, gstAmount, totalAmount;
+
+            if (includeGST) {
+                // Amount includes GST, so we need to extract it
+                originalAmount = amount / (1 + gstRate);
+                gstAmount = amount - originalAmount;
+                totalAmount = amount;
+            } else {
+                // Amount doesn't include GST, so we need to add it
+                originalAmount = amount;
+                gstAmount = amount * gstRate;
+                totalAmount = amount + gstAmount;
+            }
+
+            document.getElementById('originalAmount').textContent = '₹' + originalAmount.toFixed(2);
+            document.getElementById('gstAmount').textContent = '₹' + gstAmount.toFixed(2);
+            document.getElementById('totalAmount').textContent = '₹' + totalAmount.toFixed(2);
+        }
+
+        // Initialize calculation when GST rate changes
+        document.getElementById('gstRate').addEventListener('change', calculate);
+    </script>
+</body>
+</html>
